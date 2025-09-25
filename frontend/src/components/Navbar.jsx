@@ -1,12 +1,21 @@
 // src/components/Navbar.js
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthProvider";
+
 import Logout from "../pages/Logout";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { SignOutButton } from "@clerk/clerk-react";
 
 function Navbar() {
-  const [authUser, setAuthUser] = useAuth();
   const [active, setActive] = useState("Home");
+  const { isSignedIn, user, isLoaded } = useUser();
+  const { sessionId } = useAuth();
+
+  if (isLoaded && isSignedIn) {
+    console.log(user);
+    console.log(sessionId);
+  }
+
 
   return (
     <nav
@@ -15,14 +24,14 @@ function Navbar() {
     >
       <div className="container mx-auto px-4 py-2 flex justify-between items-center">
         <Link
-          className="text-2xl font-bold text-pink-600 hover:text-pink-500 hover:border-2 hover:border-pink-400 duration-300 p-1 mr-2 ml-0 m-1 rounded-3xl"
+          className="text-2xl font-bold text-primary hover:text-secondary hover:border-2 hover:border-pink-400 duration-300 p-1 mr-2 ml-0 m-1 rounded-3xl"
           to="/"
           onClick={() => setActive("Home")}
         >
           SheManages
         </Link>
         <button
-          className="text-pink-500 md:hidden focus:outline-none focus:ring-2 rounded-md focus:ring-pink-500 border-none hover:scale-125 duration-500"
+          className="text-secondary md:hidden focus:outline-none focus:ring-2 rounded-md focus:ring-subHeading border-none hover:scale-125 duration-500"
           type="button"
           aria-controls="mobile-menu"
           aria-expanded="false"
@@ -32,7 +41,7 @@ function Navbar() {
           }}
         >
           <svg
-            className="h-6 w-6"
+            className="h-6 w-6 text-heading"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -51,64 +60,64 @@ function Navbar() {
           id="navbarNav"
         >
           <Link
-            className="text-gray-800 hover:text-gray-600 px-3 py-2 hover:bg-pink-100 rounded-md"
+            className="text-heading hover:text-subHeading px-3 py-2 hover:bg-blue-100 rounded-md"
             to="/"
             onClick={() => setActive("Home")}
           >
             Home
             {active === "Home" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
 
           <Link
-            className="text-gray-800 hover:text-gray-600 rounded-lg px-3 py-2 hover:bg-pink-100"
+            className="text-heading hover:text-subheading rounded-lg px-3 py-2 hover:bg-blue-100"
             to="/resources"
             onClick={() => setActive("Resources")}
           >
             Resources
             {active === "Resources" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading  bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
           <Link
-            className="text-gray-800 hover:text-gray-600 rounded-md hover:bg-pink-100 px-3 py-2"
+            className="text-heading hover:text-gray-600 rounded-md hover:bg-blue-100 px-3 py-2"
             to="/products"
             onClick={() => setActive("Products")}
           >
             Products
             {active === "Products" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
           <Link
-            className="block text-gray-800 hover:bg-pink-100 rounded-md px-3 py-2"
+            className="block text-heading hover:bg-blue-100 rounded-md px-3 py-2"
             to="/ideas"
             onClick={() => setActive("Ideas")}
           >
             Ideas
             {active === "Ideas" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
 
-          {authUser ? (
+          {isSignedIn ? (
             <Link
-              className="block text-gray-800 hover:bg-pink-100 rounded-md px-3 py-2"
+              className="block text-heading hover:bg-blue-100 rounded-md px-3 py-2"
               to="/addproduct"
               onClick={() => setActive("Add Item")}
             >
               Add Item
               {active === "Add Item" ? (
-                <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+                <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
               ) : (
                 ""
               )}
@@ -117,15 +126,15 @@ function Navbar() {
             ""
           )}
 
-          {authUser ? (
+          {isSignedIn ? (
             <Link
-              className="block text-gray-800 hover:bg-pink-100 rounded-md px-3 py-2"
-              to={`products/myproduct/${authUser._id}`}
+              className="block text-heading hover:bg-blue-100 rounded-md px-3 py-2"
+              // to={`products/myproduct/${isSignedIn._id}`}
               onClick={() => setActive("My Profile")}
             >
               My Profile
               {active === "My Profile" ? (
-                <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+                <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
               ) : (
                 ""
               )}
@@ -134,11 +143,13 @@ function Navbar() {
             ""
           )}
 
-          {authUser ? (
-            <Logout />
+          {isLoaded && isSignedIn ? (
+            <SignOutButton>
+              <button className="bg-primary hover:bg-secondary text-white p-2 rounded-lg ">Logout</button>
+            </SignOutButton>
           ) : (
             <Link to="/login">
-              <button className="bg-pink-500 w-full text-white px-4 py-2 rounded-md hover:bg-pink-600">
+              <button className="bg-secondary text-white px-4 py-2 rounded-md hover:bg-primary">
                 Login
               </button>
             </Link>
@@ -148,63 +159,63 @@ function Navbar() {
       <div className="md:hidden hidden" id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link
-            className="block text-gray-800 rounded-md px-3 py-2"
+            className="block text-heading rounded-md px-3 py-2"
             to="/"
             onClick={() => setActive("Home")}
           >
             Home
             {active === "Home" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
           <Link
-            className="block text-gray-800 rounded-md px-3 py-2"
+            className="block text-heading rounded-md px-3 py-2"
             to="/resources"
             onClick={() => setActive("Resources")}
           >
             Resources
             {active === "Resources" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
           <Link
-            className="block text-gray-800  rounded-md px-3 py-2"
+            className="block text-heading  rounded-md px-3 py-2"
             to="/products"
             onClick={() => setActive("Products")}
           >
             Products
             {active === "Products" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
           <Link
-            className="block text-gray-800  rounded-md px-3 py-2"
+            className="block text-heading  rounded-md px-3 py-2"
             to="/ideas"
             onClick={() => setActive("Ideas")}
           >
             Ideas
             {active === "Ideas" ? (
-              <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+              <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
             ) : (
               ""
             )}
           </Link>
 
-          {authUser ? (
+          {isLoaded && isSignedIn ? (
             <Link
-              className="block text-gray-800  rounded-md px-3 py-2"
+              className="block text-heading  rounded-md px-3 py-2"
               to="/addproduct"
               onClick={() => setActive("Add Item")}
             >
               Add Item
               {active === "Add Item" ? (
-                <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+                <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
               ) : (
                 ""
               )}
@@ -213,15 +224,15 @@ function Navbar() {
             ""
           )}
 
-          {authUser ? (
+          {isLoaded && isSignedIn ? (
             <Link
-              className="block text-gray-800  rounded-md px-3 py-2"
-              to={`products/myproduct/${authUser._id}`}
+              className="block text-heading  rounded-md px-3 py-2"
+              // to={`products/myproduct/${authUser._id}`}
               onClick={() => setActive("My Profile")}
             >
               My Profile
               {active === "My Profile" ? (
-                <hr className=" h-1 text-red-500 bg-red-500 rounded-full"></hr>
+                <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
               ) : (
                 ""
               )}
@@ -230,11 +241,13 @@ function Navbar() {
             ""
           )}
 
-          {authUser ? (
-            <Logout />
+          {isLoaded && isSignedIn ? (
+            <SignOutButton>
+              <button className="bg-primary hover:bg-secondary text-white p-2 rounded-lg">Logout</button>
+            </SignOutButton>
           ) : (
             <Link to="/login">
-              <button className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600">
+              <button className="bg-secondary text-white px-4 py-2 rounded-md hover:bg-primary">
                 Login
               </button>
             </Link>

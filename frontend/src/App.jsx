@@ -22,7 +22,9 @@ const UserProducts = (del) => {
 function App() {
   const [authUser, setAuthUser] = useAuth();
   console.log("auth ", authUser);
+  
   return (
+
     <BrowserRouter>
       <Navbar />
       <Routes>
