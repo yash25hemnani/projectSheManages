@@ -1,5 +1,5 @@
 import React from "react";
-import { SignUp } from "@clerk/clerk-react";
+import { SignUp, useUser } from "@clerk/clerk-react";
 
 function Signup() {
   return (
@@ -20,10 +20,11 @@ function Signup() {
               "bg-primary hover:bg-secondary text-white border-0",
             formInput: "border border-gray-300 rounded-md p-2",
             formFieldLabel: "text-heading font-semibold",
-            // rootBox: "bg-gray-50 p-6 rounded-2xl shadow-lg",
             socialButtonsBlock: "space-y-2",
           },
         }}
+        fallbackRedirectUrl="/signup" // Go here on failure
+        forceRedirectUrl="/profile-setup" // Go here on success
       />
     </section>
   );

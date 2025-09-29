@@ -1,21 +1,47 @@
 // src/components/Navbar.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Logout from "../pages/Logout";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { SignOutButton } from "@clerk/clerk-react";
+import axios from "axios";
+import { baseUrl } from "../urls";
 
 function Navbar() {
   const [active, setActive] = useState("Home");
   const { isSignedIn, user, isLoaded } = useUser();
-  const { sessionId } = useAuth();
+  const [localUser, setLocalUser] = useState(() => {
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
 
   if (isLoaded && isSignedIn) {
     console.log(user);
     console.log(sessionId);
   }
 
+  useEffect(() => {
+    const getUserDataByEmail = async () => {
+      try {
+        const response = await axios.post(
+          `${baseUrl}/user/get-user-data-by-email`,
+          { email: user.primaryEmailAddress.emailAddress }
+        );
+
+        if (response.status === 200 && response.data.exists) {
+          const localUser = response.data.user;
+          localStorage.setItem("user", JSON.stringify(localUser));
+        }
+      } catch (error) {
+        console.log("Error in getting user data by email: ", error);
+      }
+    };
+
+    if (isLoaded && isSignedIn) {
+      getUserDataByEmail();
+    }
+  }, [isLoaded]);
 
   return (
     <nav
@@ -126,14 +152,14 @@ function Navbar() {
             ""
           )}
 
-          {isSignedIn ? (
+          {isSignedIn && isLoaded ? (
             <Link
               className="block text-heading hover:bg-blue-100 rounded-md px-3 py-2"
-              // to={`products/myproduct/${isSignedIn._id}`}
-              onClick={() => setActive("My Profile")}
+              to={`products/myproduct/${localUser.userId}`}
+              onClick={() => setActive("Profile")}
             >
-              My Profile
-              {active === "My Profile" ? (
+              Profile
+              {active === "Profile" ? (
                 <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
               ) : (
                 ""
@@ -145,7 +171,9 @@ function Navbar() {
 
           {isLoaded && isSignedIn ? (
             <SignOutButton>
-              <button className="bg-primary hover:bg-secondary text-white p-2 rounded-lg ">Logout</button>
+              <button className="bg-primary hover:bg-secondary text-white p-2 rounded-lg ">
+                Logout
+              </button>
             </SignOutButton>
           ) : (
             <Link to="/login">
@@ -243,7 +271,9 @@ function Navbar() {
 
           {isLoaded && isSignedIn ? (
             <SignOutButton>
-              <button className="bg-primary hover:bg-secondary text-white p-2 rounded-lg">Logout</button>
+              <button className="bg-primary hover:bg-secondary text-white p-2 rounded-lg">
+                Logout
+              </button>
             </SignOutButton>
           ) : (
             <Link to="/login">
