@@ -13,15 +13,10 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: true,
-    // minLength: [8, "Password number must contain 6 letters."],
-    // maxLength: [30, "Password number must less than 30 letters."],
-  },
+  // No need for password, as it is going to be stored with Clerk
   bio: {
     type: String,
-    required: true,
+    required: false,
   },
   profile: {
     type: String,
@@ -29,7 +24,7 @@ const userSchema = mongoose.Schema({
   },
   phonenumber: {
     type: Number,
-    required: true,
+    required: false,
     minLength: [10, "Phone number must contain 10 Digits."],
     maxLength: [10, "Phone number must contain 10 Digits."],
   },
