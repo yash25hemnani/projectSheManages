@@ -14,10 +14,15 @@ import {
 import ReactWhatsapp from "react-whatsapp";
 import { useAuth } from "../context/AuthProvider";
 import { baseUrl } from "../urls";
+import { useUser } from "@clerk/clerk-react";
 
-const ProductList = ({ userId, del }) => {
-  const checkdelete = del.del;
-  const [authUser, setAuthUser] = useAuth();
+const ProductList = ({ userId }) => {
+  // Implemented the delete functionality directly here
+  const { isLoaded, user } = useUser();
+  const loggedInUserEmail = user.primaryEmailAddress.emailAddress;
+  
+  // useStates
+  const [checkdelete, setCheckdelete] = useState(false)
   const [products, setProducts] = useState([]);
   const [userData, setUserData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,9 +43,7 @@ const ProductList = ({ userId, del }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(
-          `${baseUrl}/products/user/${userId}`
-        );
+        const response = await axios.get(`${baseUrl}/products/user/${userId}`);
         setProducts(response.data);
         toast.success("Products fetched successfully...");
       } catch (error) {
@@ -55,6 +58,7 @@ const ProductList = ({ userId, del }) => {
           `${baseUrl}/user/getClickedUserdata/${userId}`
         );
         setUserData(response.data);
+        setCheckdelete(loggedInUserEmail === response.data.email)
         setEditFormData({
           username: response.data.username,
           bio: response.data.bio,
@@ -76,42 +80,49 @@ const ProductList = ({ userId, del }) => {
     fetchUserData();
   }, [userId]);
 
-const handleDelete = async (productId) => {
-  try {
-    const { status } = await axios.delete(`${baseUrl}/products/delete/${productId}`);
+  const handleDelete = async (productId) => {
+    try {
+      const { status } = await axios.delete(
+        `${baseUrl}/products/delete/${productId}`
+      );
 
-    if (status === 200) {
-      toast.success("Product deleted successfully...");
-      setProducts((prevProducts) => prevProducts.filter((product) => product._id !== productId));
-    } else {
-      toast.error("Error deleting product");
-    }
-  } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error("Server responded with an error:", error.response.status, error.response.data);
-      if (error.response.status === 404) {
-        toast.error("Product not found");
-      } else if (error.response.status === 400) {
-        toast.error("Invalid product ID");
-      } else if (error.response.status === 403) {
-        toast.error("Unauthorized action");
+      if (status === 200) {
+        toast.success("Product deleted successfully...");
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== productId)
+        );
       } else {
         toast.error("Error deleting product");
       }
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error("No response received:", error.request);
-      toast.error("Network error, please try again");
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error("Error setting up request:", error.message);
-      toast.error("Error deleting product");
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error(
+          "Server responded with an error:",
+          error.response.status,
+          error.response.data
+        );
+        if (error.response.status === 404) {
+          toast.error("Product not found");
+        } else if (error.response.status === 400) {
+          toast.error("Invalid product ID");
+        } else if (error.response.status === 403) {
+          toast.error("Unauthorized action");
+        } else {
+          toast.error("Error deleting product");
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+        toast.error("Network error, please try again");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error setting up request:", error.message);
+        toast.error("Error deleting product");
+      }
     }
-  }
-};
-
+  };
 
   const handleEditChange = (e) => {
     setEditFormData({
@@ -294,7 +305,7 @@ const handleDelete = async (productId) => {
               <p className="text-gray-600">
                 <strong>Phone:</strong> {phoneNumber}
               </p>
-              <div className="flex space-x-4 mt-4 justify-center md:justify-start">
+              <div className="flex md:flex-row flex-col space-x-4 mt-4 justify-center md:justify-start items-center">
                 <ReactWhatsapp
                   number={phoneNumber}
                   message="I am interested in your work..let's Connect"
@@ -305,14 +316,14 @@ const handleDelete = async (productId) => {
                     Connect on Whatsapp
                   </button>
                 </ReactWhatsapp>
-                <div className="flex items-end justify-evenly my-auto">
+                <div className="flex items-end justify-evenly my-auto md:w-[40%] w-full bg-blue-">
                   <a
                     href={userData.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 transition-colors w-8 h-8"
                   >
-                    <FaLinkedin />
+                    <FaLinkedin size={30} />
                   </a>
                   <a
                     href={userData.github}
@@ -320,7 +331,7 @@ const handleDelete = async (productId) => {
                     rel="noopener noreferrer"
                     className="text-gray-800 hover:text-gray-600 transition-colors w-8 h-8"
                   >
-                    <FaGithub />
+                    <FaGithub size={30} />
                   </a>
                   <a
                     href={userData.twitter}
@@ -328,7 +339,7 @@ const handleDelete = async (productId) => {
                     rel="noopener noreferrer"
                     className="text-blue-400 hover:text-blue-600 transition-colors w-8 h-8"
                   >
-                    <FaTwitter />
+                    <FaTwitter size={30} />
                   </a>
                   <a
                     href={userData.instagram}
@@ -336,11 +347,11 @@ const handleDelete = async (productId) => {
                     rel="noopener noreferrer"
                     className="text-pink-600 hover:text-pink-800 transition-colors w-8 h-8"
                   >
-                    <FaInstagram />
+                    <FaInstagram size={30} />
                   </a>
                 </div>
               </div>
-              {checkdelete === "true" && (
+              {checkdelete && (
                 <button
                   onClick={() => setIsEditing(true)}
                   className="bg-blue-500 text-white px-4 py-1 rounded-full hover:bg-blue-600 transition duration-300 mt-4 sm:text-base text-sm"
@@ -398,7 +409,7 @@ const handleDelete = async (productId) => {
                     ₹{item.price}
                   </p>
                 </div>
-                {checkdelete === "true" && (
+                {checkdelete && (
                   <MdDeleteSweep
                     onClick={() => handleDelete(item._id)}
                     className="hover:text-red-500 text-violet-600 hover:border-b-2 hover:border-red-700 rounded-full cursor-pointer hover:scale-110 duration-500 text-3xl transition-colors"

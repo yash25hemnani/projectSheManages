@@ -13,7 +13,7 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.get("/getClickedUserdata/:userId", getUserDataController);
 router.put("/updateProfile/:userId", updateUserController);
-router.put("/get-user-data-by-email", getUserDataByEmail);
+router.post("/get-user-data-by-email", getUserDataByEmail);
 // router.post("/getSingleUserData", getSingleUserDataController);
 
 module.exports = router;

@@ -146,6 +146,9 @@ const getUserDataByEmail = async (req, res) => {
         exists: true,
         user: {
           userId: user._id,
+          username: user.username,
+          profile: user.profile,
+          email: user.email,
         },
       });
     } else {

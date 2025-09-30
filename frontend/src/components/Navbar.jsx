@@ -1,9 +1,7 @@
 // src/components/Navbar.js
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-import Logout from "../pages/Logout";
-import { useAuth, useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import { SignOutButton } from "@clerk/clerk-react";
 import axios from "axios";
 import { baseUrl } from "../urls";
@@ -16,11 +14,7 @@ function Navbar() {
     return stored ? JSON.parse(stored) : null;
   });
 
-  if (isLoaded && isSignedIn) {
-    console.log(user);
-    console.log(sessionId);
-  }
-
+  // In the NavBar, we are saving the user to the local storage
   useEffect(() => {
     const getUserDataByEmail = async () => {
       try {
@@ -30,8 +24,8 @@ function Navbar() {
         );
 
         if (response.status === 200 && response.data.exists) {
-          const localUser = response.data.user;
-          localStorage.setItem("user", JSON.stringify(localUser));
+          setLocalUser(response.data.user);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
         }
       } catch (error) {
         console.log("Error in getting user data by email: ", error);
@@ -41,7 +35,7 @@ function Navbar() {
     if (isLoaded && isSignedIn) {
       getUserDataByEmail();
     }
-  }, [isLoaded]);
+  }, [isLoaded, user, isSignedIn]);
 
   return (
     <nav
@@ -155,7 +149,7 @@ function Navbar() {
           {isSignedIn && isLoaded ? (
             <Link
               className="block text-heading hover:bg-blue-100 rounded-md px-3 py-2"
-              to={`products/myproduct/${localUser.userId}`}
+              to={`products/myproduct/${localUser?.userId}`}
               onClick={() => setActive("Profile")}
             >
               Profile
@@ -255,11 +249,11 @@ function Navbar() {
           {isLoaded && isSignedIn ? (
             <Link
               className="block text-heading  rounded-md px-3 py-2"
-              // to={`products/myproduct/${authUser._id}`}
-              onClick={() => setActive("My Profile")}
+              to={`products/myproduct/${localUser?.userId}`}
+              onClick={() => setActive("Profile")}
             >
-              My Profile
-              {active === "My Profile" ? (
+              Profile
+              {active === "Profile" ? (
                 <hr className=" h-1 text-heading bg-heading rounded-full"></hr>
               ) : (
                 ""

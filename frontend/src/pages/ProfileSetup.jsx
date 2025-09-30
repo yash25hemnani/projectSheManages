@@ -27,13 +27,13 @@ const ProfileSetup = () => {
             // If user exists, redirect them to their profile
             const userId = response.data.userId;
             console.log("Here");         
-            navigate(`/profile/${userId}`);
+            navigate(`/products/myproduct/${userId}`);
           }
           
           // If user is created successfully
           if (response.status === 201) {
             const userId = response.data.user?.userId;
-            navigate(`/profile/${userId}`);
+            navigate(`/products/myproduct/${userId}`);
           }
         } catch (error) {
           console.log("Error in saving user to database: ", error);
