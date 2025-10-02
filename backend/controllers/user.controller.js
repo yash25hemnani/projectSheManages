@@ -101,7 +101,6 @@ const updateUserController = async (req, res) => {
   const {
     username,
     bio,
-    email,
     phonenumber,
     linkedin,
     github,
@@ -115,7 +114,6 @@ const updateUserController = async (req, res) => {
       {
         username,
         bio,
-        email,
         phonenumber,
         linkedin,
         github,
