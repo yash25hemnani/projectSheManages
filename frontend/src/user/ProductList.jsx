@@ -32,7 +32,6 @@ const ProductList = ({ userId }) => {
   const [editFormData, setEditFormData] = useState({
     username: "",
     bio: "",
-    email: "",
     phonenumber: "",
     linkedin: "",
     github: "",
@@ -62,7 +61,6 @@ const ProductList = ({ userId }) => {
         setEditFormData({
           username: response.data.username,
           bio: response.data.bio,
-          email: response.data.email,
           phonenumber: response.data.phonenumber,
           linkedin: response.data.linkedin,
           github: response.data.github,
@@ -195,16 +193,6 @@ const ProductList = ({ userId }) => {
                 type="text"
                 name="bio"
                 value={editFormData.bio}
-                onChange={handleEditChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={editFormData.email}
                 onChange={handleEditChange}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
               />

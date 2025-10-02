@@ -25,7 +25,7 @@ import { useUser } from "@clerk/clerk-react";
 // Wrapper for protected routes
 const ProtectedRoute = ({ children }) => {
   const { isLoaded, isSignedIn } = useUser();
-  if (!isLoaded) return null; 
+  if (!isLoaded) return null;
   return isSignedIn ? children : <Navigate to="/login" replace />;
 };
 
@@ -70,6 +70,14 @@ function App() {
             </PublicRoute>
           }
         />
+        <Route
+          path="/signup/*"
+          element={
+            <PublicRoute>
+              <Signup routing="path" path="/signup" />
+            </PublicRoute>
+          }
+        />
 
         {/* Protected routes */}
         <Route
@@ -100,7 +108,7 @@ function App() {
           path="/products/myproduct/:userId"
           element={
             <ProtectedRoute>
-              <UserProducts  />
+              <UserProducts />
             </ProtectedRoute>
           }
         />
