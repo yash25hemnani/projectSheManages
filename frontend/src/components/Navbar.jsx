@@ -264,7 +264,7 @@ function Navbar() {
           )}
 
           {isLoaded && isSignedIn ? (
-            <SignOutButton>
+            <SignOutButton signOutCallback={() => localStorage.removeItem("user")}>
               <button className="bg-primary hover:bg-secondary text-white p-2 rounded-lg">
                 Logout
               </button>
