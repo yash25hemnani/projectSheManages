@@ -44,6 +44,7 @@ const ProductList = ({ userId }) => {
       try {
         const response = await axios.get(`${baseUrl}/products/user/${userId}`);
         setProducts(response.data);
+        console.log(response.data);
         toast.success("Products fetched successfully...");
       } catch (error) {
         toast.error("Error fetching products");
@@ -385,7 +386,7 @@ const ProductList = ({ userId }) => {
                 className="bg-white p-4 shadow-md rounded-lg flex flex-col items-center transition-transform transform hover:scale-105"
               >
                 <img
-                  src={item.imageUrl}
+                  src={`${baseUrl}/uploads/${item.image.filename}`}
                   alt={item.name}
                   className="w-full h-48 object-cover rounded-t-lg mb-4"
                 />

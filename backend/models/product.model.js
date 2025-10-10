@@ -1,5 +1,6 @@
 // models/Product.js
 const mongoose = require("mongoose");
+const imageSchema = require("../schema/imageSchema");
 
 const productSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -8,7 +9,7 @@ const productSchema = new mongoose.Schema({
   profile: { type: String, required: true },
   category: { type: String, required: true },
   price: { type: Number, required: true },
-  imageUrl: { type: String, required: true },
+  image: imageSchema, // Single Image
   createdAt: { type: Date, default: Date.now },
 });
 
